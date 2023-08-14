@@ -2,10 +2,16 @@ import Card from "./cards.model";
 import Player from "./player.models";
 
 export interface Game{
-    players?: Player[],
+    gameStarted: boolean;
+    players?: Player[],    
     turnOrder?: string[], //Player Ids
     activeCard?: Card,
     points?: Record<string,number>[]
     cards?: Record<string,Card[]>[]
-    password?: string
+    password?: string,
+    cardSets: string[],
+}
+
+export interface GameWithId extends Game{
+    id: string;
 }

@@ -15,11 +15,19 @@ export class GameService{
     
     public createGame(player: Player): Game {
         let game: Game = {
+            gameStarted: false,
             activeCard: null,
             players: [player],
             points: [],
-            turnOrder: []
+            turnOrder: [],
+            cardSets:[]
         };
         return game
-     }
+    }
+
+    public startGame(game: Game): Game {
+        let startedGame = game;
+        startedGame.gameStarted = true;
+        return startedGame
+    }
 }
