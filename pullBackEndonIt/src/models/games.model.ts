@@ -1,13 +1,10 @@
 import Card from "./cards.model";
-import Player from "./player.models";
+import {Player, PlayerInGame} from "./player.models";
 
 export interface Game{
     gameStarted: boolean;
-    players?: Player[],    
-    turnOrder?: string[], //Player Ids
+    players?: PlayerInGame[],    
     activeCard?: Card,
-    points?: Record<string,number>[]
-    cards?: Record<string,Card[]>[]
     password?: string,
     cardSets: string[],
 }

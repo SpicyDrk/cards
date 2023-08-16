@@ -3,7 +3,7 @@ import bodyParser, { json } from "body-parser";
 import { ObjectId } from "mongodb";
 import { collections } from "../services/database.service";
 import { GameService } from "../services/game.service";
-import Player from "../models/player.models";
+import { Player, PlayerInGame } from "../models/player.models";
 import { Game, GameWithId } from "../models/games.model";
 
 
@@ -62,7 +62,7 @@ cardsRouter.post("/create-game", async (req: Request, res: Response) =>{
     let service = GameService.getInstance();
     let game = service.createGame(gameData);
     let gameResult = await collections.games.insertOne(game)
-    res.status(200).send(game);
+    res.status(200).send(gameResult);
 })
 
 cardsRouter.post("/start-game", async (req: Request, res: Response) =>{
@@ -81,6 +81,10 @@ cardsRouter.post("/start-game", async (req: Request, res: Response) =>{
         res.status(400).send("Unable to find game with id: " + gameData.id);
         return;
     }
+    if (game.gameStarted){
+        res.status(400).send("Can't start a game that was already started.");
+        return;
+    }
     let service = GameService.getInstance();
     let startedGame = service.startGame(gameData);
     await collections.games.updateOne(query, {$set:startedGame}).then(()=>{
@@ -88,9 +92,12 @@ cardsRouter.post("/start-game", async (req: Request, res: Response) =>{
     });
 })
 
-cardsRouter.get("/join-game/:id", async (req: Request, res: Response) =>{
-    const id = req?.params?.id;
-    res.status(200).send(id);
+cardsRouter.post("/join-game/:id", async (req: Request, res: Response) =>{
+    const gameId = req?.params?.id;
+    const playerId = req?.body?.playerId;
+    let service = GameService.getInstance();
+    service.joinGame(gameId, playerId, res);
+    return gameId;
 })
 
 //** Login */
